@@ -5,17 +5,15 @@ interface SustainabilityNotesProps {
   checkIcon: React.ReactNode;
 }
 
-const SustainabilityNotes: React.FC<SustainabilityNotesProps> = ({ notes, checkIcon }) => {
-  return (
-    <div className="mt-8 space-y-2">
-      {notes.map((note) => (
-        <p key={note} className="text-[11px] flex items-center gap-2 text-grey-medium font-medium">
-          <span className="text-earthy-green">{checkIcon}</span>
-          {note}
-        </p>
-      ))}
-    </div>
-  );
-};
+const SustainabilityNotes: React.FC<SustainabilityNotesProps> = ({ notes, checkIcon }) => (
+  <div className="mt-8 space-y-2">
+    {notes.map((note) => (
+      <p key={note} className="text-[11px] flex items-center gap-2 text-grey-medium font-medium">
+        <span className="text-earthy-green">{checkIcon}</span>
+        {note}
+      </p>
+    ))}
+  </div>
+);
 
 export default SustainabilityNotes;

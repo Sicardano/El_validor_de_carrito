@@ -1,6 +1,7 @@
 import React from 'react';
 import { BoxIcon } from './Icons';
 import { CartBreakdown } from '../types';
+import { styles } from '../styles/classNames';
 
 interface BreakdownSummaryProps {
   breakdown: CartBreakdown;
@@ -15,6 +16,20 @@ interface BreakdownSummaryProps {
   discountBadgeLabel: string;
 }
 
+const PriceRow = ({ label, value, suffix, icon, badge }: any) => (
+  <div className="flex justify-between items-center">
+    <div className="flex items-center gap-2 text-sm font-medium dark:text-grey-medium">
+      {label} {icon && <span className={styles.text.hint}>{icon}</span>}
+    </div>
+    <div className="flex items-center gap-2">
+      <div className="font-mono text-lg font-bold dark:text-white">
+        {value} <span className={styles.text.currency}>{suffix}</span>
+      </div>
+      {badge}
+    </div>
+  </div>
+);
+
 const BreakdownSummary: React.FC<BreakdownSummaryProps> = ({
   breakdown,
   formatNumber,
@@ -26,54 +41,36 @@ const BreakdownSummary: React.FC<BreakdownSummaryProps> = ({
   currencySymbol,
   freeBadgeLabel,
   discountBadgeLabel
-}) => {
-  return (
-    <div className="space-y-4 mb-8">
-      <div className="flex justify-between items-center">
-        <div className="flex items-center gap-2 text-sm font-medium dark:text-grey-medium">
-          {subtotalLabel}{' '}
-          <span className="text-xs opacity-50 cursor-help" title={subtotalInfoTitle}>
-            {subtotalInfoIcon}
-          </span>
-        </div>
-        <div className="font-mono text-lg font-bold dark:text-white">
-          {formatNumber(breakdown.importe)}{' '}
-          <span className="text-sm font-normal text-grey-medium">{currencySymbol}</span>
-        </div>
-      </div>
+}) => (
+  <div className="space-y-4 mb-8">
+    <PriceRow
+      label={subtotalLabel}
+      value={formatNumber(breakdown.importe)}
+      suffix={currencySymbol}
+      icon={<span title={subtotalInfoTitle}>{subtotalInfoIcon}</span>}
+    />
 
-      <div className="flex justify-between items-center">
-        <div className="flex items-center gap-2 text-sm font-medium dark:text-grey-medium">
-          {shippingLabel} <BoxIcon className="w-4 h-4 opacity-60" />
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="font-mono text-lg font-bold dark:text-white">
-            {formatNumber(breakdown.envio)}{' '}
-            <span className="text-sm font-normal text-grey-medium">{currencySymbol}</span>
-          </div>
-          {breakdown.envio === 0 ? (
-            <span className="bg-green-100 text-earthy-green text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
-              {freeBadgeLabel}
-            </span>
-          ) : breakdown.envio < 10 ? (
-            <span className="bg-orange-100 text-warning-earth text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
-              {discountBadgeLabel}
-            </span>
-          ) : null}
-        </div>
-      </div>
+    <PriceRow
+      label={shippingLabel}
+      value={formatNumber(breakdown.envio)}
+      suffix={currencySymbol}
+      icon={<BoxIcon className="w-4 h-4 opacity-60" />}
+      badge={
+        breakdown.envio === 0 && <span className={styles.badge.free}>{freeBadgeLabel}</span> ||
+        breakdown.envio < 10 && <span className={styles.badge.discount}>{discountBadgeLabel}</span> ||
+        null
+      }
+    />
 
-      <hr className="border-light-grey dark:border-[#333] my-2" />
+    <hr className="border-light-grey dark:border-[#333] my-2" />
 
-      <div className="flex justify-between items-center pt-2">
-        <span className="text-lg font-bold uppercase tracking-wider dark:text-white">{totalLabel}</span>
-        <div className="font-mono text-3xl font-bold text-earthy-green dark:text-[#4ade80]">
-          {formatNumber(breakdown.total)}{' '}
-          <span className="text-lg font-normal">{currencySymbol}</span>
-        </div>
+    <div className="flex justify-between items-center pt-2">
+      <span className="text-lg font-bold uppercase tracking-wider dark:text-white">{totalLabel}</span>
+      <div className="font-mono text-3xl font-bold text-earthy-green dark:text-[#4ade80]">
+        {formatNumber(breakdown.total)} <span className="text-lg font-normal">{currencySymbol}</span>
       </div>
     </div>
-  );
-};
+  </div>
+);
 
 export default BreakdownSummary;

@@ -1,5 +1,6 @@
 import React from 'react';
 import { CartBreakdown } from '../types';
+import { styles } from '../styles/classNames';
 import CartInput from './CartInput';
 import PresetButtons from './PresetButtons';
 import BreakdownSummary from './BreakdownSummary';
@@ -55,38 +56,27 @@ interface CartPanelProps {
   };
 }
 
-const CartPanel: React.FC<CartPanelProps> = ({
-  inputValue,
-  presetValues,
-  breakdown,
-  isCalculating,
-  showConfirmation,
-  formatNumber,
-  onInputChange,
-  onCalculate,
-  onPresetSelect,
-  onCheckout,
-  labels,
-  icons
-}) => {
+const CartPanel: React.FC<CartPanelProps> = (props) => {
+  const { labels, icons, breakdown, formatNumber } = props;
+
   return (
-    <section className="bg-pure-white dark:bg-[#1f1f1f] rounded-2xl p-6 sm:p-10 shadow-card dark:shadow-none dark:border dark:border-[#333] animate-[slideIn_0.3s_ease-out]">
+    <section className={styles.container.section}>
       <CartInput
         label={labels.cartLabel}
         currencyHint={labels.cartCurrencyHint}
         currencySymbol={labels.currencySymbol}
         rangeLabel={labels.cartRangeLabel}
-        inputValue={inputValue}
-        onInputChange={onInputChange}
-        onCalculate={onCalculate}
+        inputValue={props.inputValue}
+        onInputChange={props.onInputChange}
+        onCalculate={props.onCalculate}
       />
 
       <PresetButtons
         heading={labels.presetsHeading}
-        presetValues={presetValues}
-        inputValue={inputValue}
+        presetValues={props.presetValues}
+        inputValue={props.inputValue}
         currencySymbol={labels.currencySymbol}
-        onSelect={onPresetSelect}
+        onSelect={props.onPresetSelect}
       />
 
       <hr className="border-light-grey dark:border-[#333] mb-8" />
@@ -124,17 +114,17 @@ const CartPanel: React.FC<CartPanelProps> = ({
       <SustainabilityNotes notes={labels.sustainabilityNotes} checkIcon={icons.sustainabilityCheck} />
 
       <CheckoutActions
-        isCalculating={isCalculating}
+        isCalculating={props.isCalculating}
         calculateLabel={labels.calculateLabel}
         calculatingLabel={labels.calculatingLabel}
         checkoutLabel={labels.checkoutLabel}
         loadingIcon={icons.loading}
         checkoutIcon={icons.checkout}
-        onCalculate={onCalculate}
-        onCheckout={onCheckout}
+        onCalculate={props.onCalculate}
+        onCheckout={props.onCheckout}
       />
 
-      <ConfirmationAlert show={showConfirmation} message={labels.confirmationMessage} icon={icons.confirmation} />
+      <ConfirmationAlert show={props.showConfirmation} message={labels.confirmationMessage} icon={icons.confirmation} />
     </section>
   );
 };

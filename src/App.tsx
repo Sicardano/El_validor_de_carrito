@@ -6,8 +6,7 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import CartPanel from './components/CartPanel';
 import AnimationStyles from './components/AnimationStyles';
-
-const PRESET_VALUES = [30, 75, 150, 250];
+import { PRESET_VALUES, LABELS, ICONS } from './constants/config';
 
 const App: React.FC = () => {
   const [state, setState] = useState<AppState>({
@@ -20,78 +19,20 @@ const App: React.FC = () => {
 
   const [inputValue, setInputValue] = useState('120');
 
-  const labels = {
-    headerTitle: 'Eco-Friendly Shop',
-    toggleThemeLabel: 'Toggle Theme',
-    cartLabel: 'Importe del Carrito',
-    cartCurrencyHint: '(€)',
-    cartRangeLabel: 'Rango: 0€ - 500€',
-    presetsHeading: 'Compras Recomendadas',
-    subtotalLabel: 'Subtotal',
-    subtotalInfoTitle: 'Subtotal sin envío',
-    shippingLabel: 'Envío',
-    totalLabel: 'Total',
-    currencySymbol: '€',
-    freeBadgeLabel: '¡Gratis!',
-    discountBadgeLabel: 'Descuento',
-    vipTitle: 'Beneficios VIP',
-    vipBenefits: [
-      'Envío totalmente gratuito',
-      'Regalo ecológico exclusivo incluido',
-      'Empaque premium biodegradable'
-    ],
-    progressTitle: 'Progreso Envío Gratis',
-    progressGoalLabel: '100€',
-    progressPrefix: 'Faltan',
-    progressSuffix: 'para envío gratis',
-    sustainabilityNotes: [
-      'Productos 100% sostenibles',
-      'Empaques biodegradables y reciclables'
-    ],
-    calculateLabel: 'Calcular',
-    calculatingLabel: 'Calculando...',
-    checkoutLabel: 'Proceder al Pago',
-    footerText: '© 2026 Eco-Friendly Shop | Hecho con ❤️ para un planeta más sostenible',
-    footerLinks: [
-      { label: 'Política de Privacidad', href: '#' },
-      { label: 'Términos de Servicio', href: '#' },
-      { label: 'Contacto', href: '#' }
-    ]
-  };
-
-  const icons = {
-    toggleLight: '☀️',
-    toggleDark: '🌙',
-    subtotalInfo: 'ℹ️',
-    message: '✓',
-    vipMessage: '🎁',
-    benefitCheck: '✓',
-    loading: '⏳',
-    checkout: '→',
-    confirmation: '✓',
-    sustainabilityCheck: '✓'
-  };
-
   // Load theme from localStorage on mount
   useEffect(() => {
-    const savedTheme = localStorage.getItem('theme');
-    const isDark = savedTheme === 'dark';
-    if (isDark) {
-      document.documentElement.classList.add('dark');
-    }
+    const isDark = localStorage.getItem('theme') === 'dark';
     setState(prev => ({ ...prev, isDarkMode: isDark }));
+    isDark 
+      ? document.documentElement.classList.add('dark')
+      : document.documentElement.classList.remove('dark');
   }, []);
 
   const toggleDarkMode = () => {
     const newMode = !state.isDarkMode;
     setState(prev => ({ ...prev, isDarkMode: newMode }));
-    if (newMode) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
-    }
+    document.documentElement.classList.toggle('dark', newMode);
+    localStorage.setItem('theme', newMode ? 'dark' : 'light');
   };
 
   const handleCalculate = async () => {
@@ -100,11 +41,8 @@ const App: React.FC = () => {
       alert('Por favor ingresa un importe válido entre 0€ y 500€');
       return;
     }
-
     setState(prev => ({ ...prev, isCalculating: true }));
-    // Simulate brief processing time
-    await new Promise(resolve => setTimeout(resolve, 300));
-    
+    await new Promise(r => setTimeout(r, 300));
     setState(prev => ({
       ...prev,
       isCalculating: false,
@@ -119,14 +57,11 @@ const App: React.FC = () => {
       return;
     }
     setState(prev => ({ ...prev, showConfirmation: true }));
-    setTimeout(() => {
-      setState(prev => ({ ...prev, showConfirmation: false }));
-    }, 5000);
+    setTimeout(() => setState(prev => ({ ...prev, showConfirmation: false })), 5000);
   };
 
   const setPreset = (val: number) => {
     setInputValue(val.toString());
-    // Auto calculate for better UX
     setTimeout(() => {
       setState(prev => ({
         ...prev,
@@ -138,14 +73,19 @@ const App: React.FC = () => {
 
   const confirmationMessage = `¡Pedido confirmado! Total: ${formatearNumero(state.breakdown.total)}€. Recibirás un email en breve.`;
 
+  const panelLabels = {
+    ...LABELS,
+    confirmationMessage
+  };
+
   return (
     <div className="min-h-screen flex flex-col font-sans selection:bg-earthy-green/20">
       <Header
-        title={labels.headerTitle}
+        title={LABELS.headerTitle}
         isDarkMode={state.isDarkMode}
-        toggleLabel={labels.toggleThemeLabel}
-        lightIcon={icons.toggleLight}
-        darkIcon={icons.toggleDark}
+        toggleLabel={LABELS.toggleThemeLabel}
+        lightIcon={ICONS.toggleLight}
+        darkIcon={ICONS.toggleDark}
         onToggle={toggleDarkMode}
       />
 
@@ -162,45 +102,13 @@ const App: React.FC = () => {
             onCalculate={handleCalculate}
             onPresetSelect={setPreset}
             onCheckout={handleCheckout}
-            labels={{
-              cartLabel: labels.cartLabel,
-              cartCurrencyHint: labels.cartCurrencyHint,
-              cartRangeLabel: labels.cartRangeLabel,
-              presetsHeading: labels.presetsHeading,
-              subtotalLabel: labels.subtotalLabel,
-              subtotalInfoTitle: labels.subtotalInfoTitle,
-              shippingLabel: labels.shippingLabel,
-              totalLabel: labels.totalLabel,
-              currencySymbol: labels.currencySymbol,
-              freeBadgeLabel: labels.freeBadgeLabel,
-              discountBadgeLabel: labels.discountBadgeLabel,
-              vipTitle: labels.vipTitle,
-              vipBenefits: labels.vipBenefits,
-              progressTitle: labels.progressTitle,
-              progressGoalLabel: labels.progressGoalLabel,
-              progressPrefix: labels.progressPrefix,
-              progressSuffix: labels.progressSuffix,
-              sustainabilityNotes: labels.sustainabilityNotes,
-              calculateLabel: labels.calculateLabel,
-              calculatingLabel: labels.calculatingLabel,
-              checkoutLabel: labels.checkoutLabel,
-              confirmationMessage
-            }}
-            icons={{
-              subtotalInfo: icons.subtotalInfo,
-              message: icons.message,
-              vipMessage: icons.vipMessage,
-              benefitCheck: icons.benefitCheck,
-              loading: icons.loading,
-              checkout: icons.checkout,
-              confirmation: icons.confirmation,
-              sustainabilityCheck: icons.sustainabilityCheck
-            }}
+            labels={panelLabels}
+            icons={ICONS}
           />
         </div>
       </main>
 
-      <Footer text={labels.footerText} links={labels.footerLinks} />
+      <Footer text={LABELS.footerText} links={LABELS.footerLinks} />
       <AnimationStyles />
     </div>
   );

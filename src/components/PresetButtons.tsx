@@ -1,4 +1,5 @@
 import React from 'react';
+import { styles } from '../styles/classNames';
 
 interface PresetButtonsProps {
   heading: string;
@@ -15,7 +16,7 @@ const PresetButtons: React.FC<PresetButtonsProps> = ({
   currencySymbol,
   onSelect
 }) => {
-  const selectedValue = Number.parseFloat(inputValue);
+  const selectedValue = parseFloat(inputValue);
 
   return (
     <div className="mb-8">
@@ -25,11 +26,7 @@ const PresetButtons: React.FC<PresetButtonsProps> = ({
           <button
             key={value}
             onClick={() => onSelect(value)}
-            className={`py-2 text-sm font-semibold rounded-lg border-2 transition-all ${
-              selectedValue === value
-                ? 'bg-earthy-green border-earthy-green text-white shadow-md'
-                : 'bg-grey-light dark:bg-[#2a2a2a] border-transparent hover:border-earthy-green dark:text-grey-medium'
-            }`}
+            className={styles.button.preset(selectedValue === value)}
           >
             {value}{currencySymbol}
           </button>
